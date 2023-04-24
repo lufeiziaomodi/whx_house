@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-4.0.0/css/bootstrap.min.css' %}">
+    <style>
+        .account {
+            width: 500px;
+            border: 1px solid #dddddd;
+            box-shadow: 5px 5px 5px #6c757d;
+            /*height: 350px;*/
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 200px;
+            padding: 30px 50px;
+            border-radius: 5px;
+        }
+
+        .account h2 {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="account">
+    <h2>用户登陆</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>用户名</label>
+            {{ form.username }}
+            <span style="color: red"> {{ form.username.errors.0 }} </span>
+        </div>
+        <div class="form-group">
+            <label>密码</label>
+            {{ form.password }}
+            <span style="color: red"> {{ form.password.errors.0 }} </span>
+        </div>
+        <div style="text-align: center">
+            <input type="submit" value="登陆" class="btn btn-primary">
+            <a class="btn-success" , href="/user_add/">
+                <button type="button" class="btn btn-success" name="register">注册</button>
+            </a>
+        </div>
+    </form>
+</div>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-4.0.0/js/bootstrap.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>舆情分析</title>
+    <link href="{% static 'css/style-1.css' %}" rel="stylesheet" type="text/css" media="all"/>
+    <script src="{% static 'js/echarts.min.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/china.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/jquery.js'%}" charset="utf-8"></script>
+</head>
+
+<body>
+    <!--页面顶部-->
+    <div class="bnt">
+        <div class="topbnt_left fl">
+            <ul>
+                <li><a href="/index/">首页</a></li>
+                <li><a href="/comment/">舆情分析</a></li>
+                <li>
+                    <div>
+                    <select id="select_id" style="color:#ffffff;border:0px;background: #00065c;">
+                        <option value="">请选择</option>
+                        <option value="1">事件1</option>
+                        <option value="2">事件2</option>
+                        <option value="3">事件3</option>
+                        <option value="4">事件4</option>
+                        <option value="5">事件5</option>
+                    </select>
+                </div>
+                </li>
+            </ul>
+        </div>
+        <h1 class="tith1 fl">舆情分析</h1>
+        <div class=" fr topbnt_right">
+            <ul>
+                <li><a href="">用户</a></li>
+                <li id = "update">更新</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 页面左部-->
+    <div class="puleft fl">
+        <!-- LDA分析-->
+        <div class="puleftboxtbott">
+            <h2 class="tith2 pt1">LDA主题分析</h2>
+            <div class="lefttoday_tit"><p class="fl">状态：已调节</p>
+                <p class="fr">更新时间： {{ ontime.new }}</p></div>
+            <div class="box pbox">
+                <div class="left2_table pumiddboxttop2_cont">
+                    <ul>
+                        <li><a href="/event1/" target="_blank">
+                            <p class="text_l">事件1</p>
+                            <p class="text_r">新浪微博 转发：86 2018-06-14 11:08:56</p>
+                        </a></li>
+                        <li><a href="/event2/" target="_blank">
+                            <p class="text_l">事件2</p>
+                            <p class="text_r">新浪微博 转发：86 2018-06-14 11:08:56</p>
+                        </a></li>
+                        <li><a href="/event3/" target="_blank">
+                            <p class="text_l">事件3</p>
+                            <p class="text_r">新浪微博 转发：86 2018-06-14 11:08:56</p>
+                        </a></li>
+                        <li><a href="/event4/" target="_blank">
+                            <p class="text_l">事件4</p>
+                            <p class="text_r">新浪微博 转发：86 2018-06-14 11:08:56</p>
+                        </a></li>
+                        <li><a href="/event5/" target="_blank">
+                            <p class="text_l">事件5</p>
+                            <p class="text_r">新浪微博 转发：86 2018-06-14 11:08:56</p>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 舆情词云-->
+        <div class="puleftboxtbott">
+            <h2 class="tith2 pt1">舆情词云分析</h2>
+
+            <div class="lefttoday_tit"><p class="fl">状态：已调节</p>
+                <p class="fr">更新时间： {{ ontime.new }}</p></div>
+            <div class="box pbox">
+               <img src="{% static 'img/ciyun1.png' %}" id="img" style="width: 90%; height: 90%;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面右部 -->
+    <div class="mr_right fr">
+        <div class="puleftboxtbott">
+            <h2 class="tith2 pt1">SnowNlp情感分析</h2>
+            <div class="lefttoday_tit"><p class="fl">状态：已调节</p>
+                <p class="fr">更新时间： {{ ontime.new }}</p></div>
+            <div class="box pbox">
+               <div id="snownlp" style="width: 100%; height: 100%"></div>
+            </div>
+        </div>
+
+           <div class="puleftboxtbott">
+            <h2 class="tith2 pt1">CBA</h2>
+
+            <div class="lefttoday_tit"><p class="fl">状态：已调节</p>
+                <p class="fr">更新时间： {{ ontime.new }}</p></div>
+            <div class="box pbox">
+                 <div id="CBA_emotion" style="width: 100%; height: 100%"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 词云 -->
+    <script>
+            $("#select_id").change(function () {
+                console.log("被调用了");
+                $.ajax({
+                    url: "/ciyun/",
+                    type: "POST",
+                    data: {id : $("#select_id").val() },
+                    success: function (res) {
+                        if(res.status){
+                            var nid = res.data.data_id;
+                            console.log(nid);
+                            if (nid == 1) $("#img").attr("src", "{% static 'img/ciyun1.png' %}");
+                            else if (nid == 2)  $("#img").attr("src", "{% static 'img/ciyun2.png' %}");
+                            else if (nid == 3)  $("#img").attr("src", "{% static 'img/ciyun3.png' %}");
+                            else if (nid == 4)  $("#img").attr("src", "{% static 'img/ciyun4.png' %}");
+                            else if (nid == 5)  $("#img").attr("src", "{% static 'img/ciyun5.png' %}");
+                        }
+                    }
+                })
+            })
+    </script>
+
+    <script>
+            $("#update").click(function () {
+                console.log("被调用了");
+                $.ajax({
+                    url: "/update/",
+                    type: "POST",
+                    success: function (res) {
+                        if(res.status){
+                            console.log("更新成功");
+                        }
+                    }
+                })
+            })
+    </script>
+    <!--    情感分析-->
+    <script type="text/javascript">
+        $(function () {
+            initSnow();
+            initCba();
+            update();
+        })
+
+        function initSnow() {
+            var myChart = echarts.init(document.getElementById('snownlp'));
+            var option = {
+                color: ['#f8e19a', '#00b7ee', '#5578cf', '#5ebbeb', '#d16ad8', '#f8e19a', '#00b7ee', '#81dabe', '#5fc5ce'],
+                backgroundColor: 'rgba(1,202,217,.2)',
+                grid: {
+                    left: 20,
+                    right: 20,
+                    top: 0,
+                    bottom: 20
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    top: 10,
+                    textStyle: {
+                        fontSize: 10,
+                        color: 'rgba(255,255,255,.7)'
+                    },
+                    data: ['积极人数', '消极人数']
+                },
+                series:
+                    {
+                        name: '详情',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '65%'],
+                        data: [],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+            };
+            $.ajax({
+                url: "/snownlp/",
+                type: "get",
+                dataType: "JSON",
+                success: function (res) {
+                    if (res.status) {
+                        // console.log(res.data.data_list);
+                        option.series.data = res.data.data_list;
+                        // console.log(option);
+                        myChart.setOption(option);
+                    }
+                }
+            })
+
+        }
+
+        function initCba() {
+            var myChart = echarts.init(document.getElementById('CBA_emotion'));
+            var option = {
+                color: ['#f8e19a', '#00b7ee', '#5578cf', '#5ebbeb', '#d16ad8', '#f8e19a', '#00b7ee', '#81dabe', '#5fc5ce'],
+                backgroundColor: 'rgba(1,202,217,.2)',
+                grid: {
+                    left: 20,
+                    right: 20,
+                    top: 0,
+                    bottom: 20
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    top: 10,
+                    textStyle: {
+                        fontSize: 10,
+                        color: 'rgba(255,255,255,.7)'
+                    },
+                    data: ['积极人数', '消极人数']
+                },
+                series:
+                    {
+                        name: '详情',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '65%'],
+                        data: [],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        label: { // 图形上的文本标签
+                            normal: {
+                                show: true,
+                                fontSize: 8,
+                            },
+                            emphasis: {
+                                show: true,
+                                fontSize: 8,
+                            }
+                        },
+                    }
+            };
+            $.ajax({
+                url: "/cbaemotion/",
+                type: "get",
+                dataType: "JSON",
+                success: function (res) {
+                    if (res.status) {
+                        // console.log(res.data.data_list);
+                        option.series.data = res.data.data_list;
+                        // console.log(option);
+                        myChart.setOption(option);
+                    }
+                }
+            })
+        }
+
+        function update() {
+            var myChart1 = echarts.init(document.getElementById('snownlp'));
+            var myChart2 = echarts.init(document.getElementById('CBA_emotion'));
+            var option = {
+                color: ['#f8e19a', '#00b7ee', '#5578cf', '#5ebbeb', '#d16ad8', '#f8e19a', '#00b7ee', '#81dabe', '#5fc5ce'],
+                backgroundColor: 'rgba(1,202,217,.2)',
+                grid: {
+                    left: 20,
+                    right: 20,
+                    top: 0,
+                    bottom: 20
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    top: 10,
+                    textStyle: {
+                        fontSize: 10,
+                        color: 'rgba(255,255,255,.7)'
+                    },
+                    data: ['积极人数', '消极人数']
+                },
+                series:
+                    {
+                        name: '详情',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '65%'],
+                        data: [],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        label: { // 图形上的文本标签
+                            normal: {
+                                show: true,
+                                fontSize: 8,
+                            },
+                            emphasis: {
+                                show: true,
+                                fontSize: 8,
+                            }
+                        },
+                    }
+            };
+            $("#select_id").change(function () {
+                console.log("选择被调用了");
+                $.ajax({
+                    url: "/snownlp/",
+                    type: "POST",
+                    data: {id : $("#select_id").val() },
+                    success: function (res) {
+                        if(res.status){
+                            option.series.data = res.data.data_list;
+                            myChart1.setOption(option);
+                        }
+                    }
+                })
+            })
+
+            $("#select_id").change(function () {
+                console.log("被调用了");
+                $.ajax({
+                    url: "/cbaemotion/",
+                    type: "POST",
+                    data: {id : $("#select_id").val() },
+                    success: function (res) {
+                        if(res.status){
+                            option.series.data = res.data.data_list;
+                            myChart2.setOption(option);
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+
+</body>
+</html>

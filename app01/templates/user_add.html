@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {%load static %}
+    <link rel="stylesheet", href="{% static 'plugins/bootstrap-4.0.0/css/bootstrap.css' %}">
+        <style>
+        .account{
+            width: 500px;
+            border: 1px solid #dddddd;
+            box-shadow: 5px 5px 5px #6c757d;
+            /*height: 350px;*/
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 200px;
+            padding: 30px 50px;
+            border-radius: 5px;
+        }
+
+        .account h2 {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="account">
+    <h2>用户注册</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+            <span style="color: red"> {{ form.username.errors.0 }} </span>
+        </div>
+        {% endfor %}
+
+        <div style="text-align: center">
+            <button type="submit" class="btn btn-primary">提 交</button>
+        </div>
+    </form>
+</div>
+    <script src = "{% static 'js/jquery.min.js' %}"> </script>
+    <script src = "{% static 'plugins/bootstrap-4.0.0/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

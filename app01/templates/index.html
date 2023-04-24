@@ -1,0 +1,387 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>智慧大数据分析</title>
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css" media="all"/>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" media="all"/>
+    <link href="{% static 'icon/bootstrap-icons-1.10.4/font/bootstrap-icons.css' %}" rel="stylesheet" type="text/css" media="all"/>
+    <script src="{% static 'js/echarts.min.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/china.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/jquery-3.2.0.min.js' %}" charset="utf-8"></script>
+</head>
+
+
+<body>
+<!--页面顶部 -->
+<div class="bnt">
+    <div class="topbnt_left fl">
+        <ul>
+            <li><a href="/index/">首页</a></li>
+            <li><a href="/comment/">舆情分析</a></li>
+            <li>
+                <select onchange="window.location=this.value; " style="color:#ffffff;border:0px;background: #00065c;">
+                    <option>
+                        事件{{ num }}
+                    </option>
+                    <option value="/index/change?nid=1">
+                        事件1
+                    </option>
+                    <option value="/index/change?nid=2">
+                        事件2
+                    </option>
+                    <option value="/index/change?nid=3">
+                        事件3
+                    </option>
+                    <option value="/index/change?nid=4">
+                        事件4
+                    </option>
+                    <option value="/index/change?nid=5">
+                        事件5
+                    </option>
+                </select>
+            </li>
+
+        </ul>
+    </div>
+    <h1 class="tith1 fl">智慧大数据分析</h1>
+    <div class=" fr topbnt_right">
+        <ul>
+            <li><a href="https://gitee.com/iGaoWei/big-data-view">用户</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- 页面左部-->
+<div class="puleft fl">
+    <!-- 舆情排行榜-->
+    <div class="pulefttop"><h2 class="tith2"><span>舆情排行榜</span></h2>
+        <div class="lefttoday_tit"><p class="fl">地区：无</p>
+            <p class="fr">更新时间： {{ ontime.new }}</p></div>
+        <div class="box pbox">
+            <div class="pvr fl pulefttoday_bar", style="width: 98%; height: 100%">
+                <div id="puleftbox2bott_cont" class="puleftbox2bott_cont"></div>
+            </div>
+        </div>
+        <!-- lefttoday_number end -->
+    </div>
+    <!-- 舆情词云-->
+    <div class="puleftboxtbott" style="margin-right: 50%">
+        <h2 class="tith2 pt1">博文展示</h2>
+        <div class="lefttoday_tit"><p class="fl">状态：已调节</p>
+            <p class="fr">时间段：{{ ontime.old }} 至 {{ ontime.new }}</p></div>
+        <div class="box pbox" style="margin-left: 4%;margin-top: 2%;overflow-y: scroll">
+            <div class="bd-example" style="width: 90%;">
+                <table class="table table-bordered" style="border-collapse:collapse;" >
+                    <thead class="table-light" style='text-align: center'>
+                    <tr>
+                        <th scope="col" style="text-align: center">#</th>
+                        <th scope="col" style="width: 340px;text-align: left">文章</th>
+                        <th scope="col" style="text-align: center">作者</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in text %}
+                    <tr style="height: 50px;">
+                        <th scope="row" style="text-align: center;vertical-align: middle">{{ forloop.counter }}</th>
+                        <td style="text-align: left;vertical-align: middle"><a href="{{ i.text_url }}">{{ i.text_content }}</a></td>
+                        <td style="text-align: center;vertical-align: middle">{{ i.text_writer }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 页面中间-->
+<div class="fl pt6 puleft2">
+    <div class="mrbox_topmidd" style="width: 100% ; height: 100%">
+        <div class="amiddboxttop">
+            <h2 class="tith2 pt1">舆情热力图</h2>
+            <div id="Thermodynamic" class="Thermodynamicfig"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 页面右部 -->
+<div class="mr_right fl">
+    <div class="pumiddboxttop2">
+        <h2 class="tith2 pt3">热搜排行</h2>
+        <div class="lefttoday_tit "><p class="fl">状态：已调节</p>
+            <p class="fr">更新时间：{{ ontime.new }}</p></div>
+        <div class="left2_table pumiddboxttop2_cont" style="overflow-y: scroll">
+            <ul>
+                {% for i in hotsearch%}
+                <li>
+                    <p class="text_l"><a href="{{url_list.forloop.counter0}}">{{ i.word }}</a></p>
+                    <p class="text_r"><i class="bi bi-tags"></i>&nbsp;&nbsp;{{ i.category }}</p>
+                    <p class="text_r"> <i class="bi bi-calendar-day"></i>&nbsp;&nbsp;{{ i.ontime }}&nbsp;&nbsp;&nbsp;&nbsp; <i class="bi bi-fire"></i>&nbsp;&nbsp;{{ i.raw_hot }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+    <div class="purightboxmidd"><h2 class="tith2 pt12">舆情走势分析</h2>
+        <div class="lefttoday_tit"><p class="fl">状态：已调节</p>
+            <p class="fr">时间段：{{ ontime.new }}</p></div>
+        <div id="purightboxmidd" class="purightboxbottcont"></div>
+    </div>
+</div>
+<!-- 待分配 -->
+
+{#舆情排行榜#}
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('puleftbox2bott_cont'));
+    option = {
+        color: ['#7ecef4'],
+        backgroundColor: 'rgba(1,202,217,.2)',
+        grid: {
+            left: 40,
+            right: 20,
+            top: 30,
+            bottom: 0,
+            containLabel: true
+        },
+
+        xAxis: {
+            type: 'value',
+            axisLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,0)'
+                }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,0)'
+                }
+            },
+            axisLabel: {
+                color: "rgba(255,255,255,0)"
+            },
+            boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+            type: 'category',
+            axisLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,.5)'
+                }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,.1)'
+                }
+            },
+            axisLabel: {
+                color: "rgba(255,255,255,.5)"
+            },
+            {#data: [{{ word.0 }}, {{ word.1 }}, {{ word.2 }}, {{ word.3 }}, {{ word.4 }}]#}
+            {# 文字太长会顶掉 #}
+            data: ['事件5', '事件4', '事件3','事件2' ,'事件1' ]
+        },
+        series: [
+            {
+                name: '2023年',
+                type: 'bar',
+                barWidth: 20,
+                itemStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(
+                            1, 0, 0, 1,
+                            [
+                                {offset: 0, color: 'rgba(230,253,139,.7)'},
+                                {offset: 1, color: 'rgba(41,220,205,.7)'}
+                            ]
+                        )
+                    }
+                },
+                data: [{{hotsearch.4.raw_hot}}, {{hotsearch.3.raw_hot}}, {{hotsearch.2.raw_hot}},{{hotsearch.1.raw_hot}} , {{hotsearch.0.raw_hot}}]
+            }
+        ]
+    };
+    myChart.setOption(option);
+</script>
+
+{#七日舆情走势分析#}
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('purightboxmidd'));
+    option = {
+        color: ['#7de494', '#7fd7b1', '#5578cf', '#5ebbeb', '#d16ad8', '#f8e19a', '#00b7ee', '#81dabe', '#5fc5ce'],
+        backgroundColor: 'rgba(1,202,217,.2)',
+
+        grid: {
+            left: 30,
+            right: 40,
+            top: 30,
+            bottom: 20,
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            axisLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,.2)'
+                }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,.1)'
+                }
+            },
+            axisLabel: {
+                color: "rgba(255,255,255,.7)"
+            },
+            data: [{% for key,value in time_str.items %}
+                {{ key }},
+                {% endfor %}]
+                {#'6-08', '6-09', '6-10', '6-11', '6-12', '6-13', '6-14']#}
+        },
+        yAxis: {
+            type: 'value',
+            axisLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,.2)'
+                }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,.1)'
+                }
+            },
+            axisLabel: {
+                color: "rgba(255,255,255,.7)"
+            },
+        },
+        series: [
+            {
+                name: '2023年',
+                type: 'line',
+                stack: '总量',
+                areaStyle: {normal: {}},
+                data: [
+                    {% for key,value in time_str.items  %}
+                        {{ value }},
+                    {% endfor %}]
+            }
+
+        ]
+    };
+    myChart.setOption(option);
+</script>
+
+{#全国舆情地图展示#}
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('Thermodynamic'));
+    data_list = [
+        {name: '北京', value: {{data_list.北京}}}, {name: '天津', value: {{data_list.天津}}},
+        {name: '上海', value: {{data_list.上海}}}, {name: '重庆', value: {{data_list.重庆}}},
+        {name: '河北', value: {{data_list.河北}}}, {name: '河南', value: {{data_list.河南}}},
+        {name: '云南', value: {{data_list.云南}}}, {name: '辽宁', value: {{data_list.辽宁}}},
+        {name: '黑龙江', value: {{data_list.黑龙江}}}, {name: '湖南', value: {{data_list.湖南}}},
+        {name: '安徽', value: {{data_list.安徽}}}, {name: '山东', value: {{data_list.广东}}},
+        {name: '新疆', value: {{data_list.新疆}}}, {name: '江苏', value: {{data_list.江苏}}},
+        {name: '浙江', value: {{data_list.浙江}}}, {name: '江西', value: {{data_list.江西}}},
+        {name: '湖北', value: {{data_list.湖北}}}, {name: '广西', value: {{data_list.广西}}},
+        {name: '甘肃', value: {{data_list.甘肃}}}, {name: '山西', value: {{data_list.山西}}},
+        {name: '内蒙古', value: {{data_list.内蒙古}}}, {name: '陕西', value: {{data_list.陕西}}},
+        {name: '吉林', value: {{data_list.吉林}}}, {name: '福建', value: {{data_list.福建}}},
+        {name: '贵州', value: {{data_list.贵州}}}, {name: '广东', value: {{data_list.广东}}},
+        {name: '青海', value: {{data_list.青海}}}, {name: '西藏', value: {{data_list.西藏}}},
+        {name: '四川', value: {{data_list.四川}}}, {name: '宁夏', value: {{data_list.宁夏}}},
+        {name: '海南', value: {{data_list.海南}}}, {name: '台湾', value: {{data_list.中国台湾}}},
+        {name: '香港', value: {{data_list.中国香港}}}, {name: '澳门', value: {{data_list.澳门}}},
+        {name: '南海诸岛', value: {{data_list.南海诸岛}}}];
+    var option = {
+        title: {
+            text: '全国舆情地图展示',
+            textStyle: {
+                color: 'gold',
+                fontStyle: 'normal',
+
+            },
+            left: 'center',
+            top: '40px'
+
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        visualMap: { // 左侧小导航图标
+            show: true,
+            type: 'piecewise',
+            splitNumber: 5,
+            x: '10%',
+            y: 'bottom',
+            textStyle: {
+                color: "fff",
+                fontSize: 12,
+            },
+            pieces: [
+                {min: 5000}, // 不指定 max，表示 max 为无限大（Infinity）。
+                {min: 1000, max: 5000},
+                {min: 200, max: 1000},
+                {min: 50, max: 200},
+                {min: 0, max: 50},
+            ],
+            color: ['#3375e4', '#6797ef', '#96b5ef','#bacae8', '#d1d4da'],
+        },
+
+        series: [{
+            name: '热度',
+            type: 'map',
+            mapType: 'china',
+            roam: false, // 禁用拖动和缩放
+            itemStyle: { // 图形样式
+                normal: {
+                    borderWidth: .5, //区域边框宽度
+                    borderColor: '#009fe8', //区域边框颜色
+                    areaColor: "#ffefd5", //区域颜色
+                },
+                emphasis: { // 鼠标滑过地图高亮的相关设置
+                    borderWidth: .5,
+                    borderColor: '#4b0082',
+                    areaColor: "#fff",
+                }
+            },
+            label: { // 图形上的文本标签
+                normal: {
+                    show: true, //省份名称
+                    fontSize: 8,
+                },
+                emphasis: {
+                    show: true,
+                    fontSize: 8,
+                }
+            },
+            data: data_list,
+        }]
+    }
+    myChart.setOption(option);
+</script>
+
+<script>
+    var num = 0
+    {% for i in url_list %}
+        $('.left2_table a').eq({{ forloop.counter0 }}).attr('href','{{ i }}')
+        if(num%2 == 1)
+        {
+            $('.left2_table li').eq({{ forloop.counter0 }}).addClass('bg')
+            console.log($('.left2_table li').eq({{ forloop.counter0 }}))
+        }
+        num = num+1
+    {% endfor %}
+</script>
+
+</body>
+</html>
